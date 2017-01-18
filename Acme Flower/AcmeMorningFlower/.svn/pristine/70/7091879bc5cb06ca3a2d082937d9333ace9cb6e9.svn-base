@@ -1,0 +1,123 @@
+package domain;
+
+import java.util.Collection;
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.format.annotation.DateTimeFormat;
+
+@Entity
+public class Order extends DomainEntity{
+	private String ticker;
+	private Date moment;
+	private String address;
+	private Date deliveryDate;
+	private Money totalPrice;
+	private CreditCard creditCard;
+	private Status status;
+	
+	@NotBlank
+	@Pattern(regexp="^(\\d{8}-\\w+)")
+	public String getTicker() {
+		return ticker;
+	}
+	public void setTicker(String ticker) {
+		this.ticker = ticker;
+	}
+	
+	@Past @NotNull
+	@DateTimeFormat(pattern="dd/MM/yyyy HH:mm")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getMoment() {
+		return moment;
+	}
+	public void setMoment(Date moment) {
+		this.moment = moment;
+	}
+	@NotBlank
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	@Past @NotNull
+	@DateTimeFormat(pattern="dd/MM/yyyy HH:mm")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+	@Valid
+	@NotNull
+	public Money getTotalPrice() {
+		return totalPrice;
+	}
+	public void setTotalPrice(Money totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+	@Valid
+	@NotNull
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
+	}
+	@Valid
+	@NotNull
+	public Status getStatus() {
+		return status;
+	}
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+	
+	private Collection<Comment> comment;
+	private Flower flower;
+	private Customer sender;
+	private Customer recipient;
+	
+	@OneToMany(mappedBy="comment")
+	public Collection<Comment> getComment() {
+		return comment;
+	}
+	public void setComment(Collection<Comment> comment) {
+		this.comment = comment;
+	}
+	@ManyToOne(optional=false)
+	public Flower getFlower() {
+		return flower;
+	}
+	public void setFlower(Flower flower) {
+		this.flower = flower;
+	}
+	@ManyToOne
+	public Customer getSender() {
+		return sender;
+	}
+	public void setSender(Customer sender) {
+		this.sender = sender;
+	}
+	@ManyToOne
+	public Customer getRecipient() {
+		return recipient;
+	}
+	public void setRecipient(Customer recipient) {
+		this.recipient = recipient;
+	}	
+	
+}

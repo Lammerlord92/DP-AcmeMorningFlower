@@ -1,0 +1,114 @@
+package services;
+
+import java.util.Collection;
+import java.util.Date;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+
+import repositories.FlowerOrderRepository;
+import repositories.FlowerRepository;
+import domain.Flower;
+import domain.FlowerOrder;
+import domain.Status;
+
+@Transactional
+@Service
+public class FlowerOrderService {
+
+	//	Managed repository -----------------------------------------	
+	@Autowired
+	private FlowerOrderRepository flowerOrderRepository;
+	//	Supporting services ----------------------------------------
+	@Autowired
+	private FlowerService flowerService;
+	//	Constructor ------------------------------------------------
+	//	Simple CRUD methods ----------------------------------------
+	//Place an order
+	public FlowerOrder create(int flowerId){	
+		FlowerOrder result;
+		result=new FlowerOrder();
+		Flower flower=flowerService.findOne(flowerId);
+		result.setFlower(flower);
+		
+		return result;
+	}
+	
+	//All catalogue
+	public Collection<FlowerOrder> findAll(){
+		Collection<FlowerOrder> result = flowerOrderRepository.findAll();
+		return result;
+	}
+	//Display by ticker	
+	public FlowerOrder findOne(String ticker){
+		FlowerOrder result = flowerOrderRepository.findByTicker(ticker);
+		return result;
+	}
+	
+	//Saving	
+	public void save(FlowerOrder flowerOrder){
+		Date date=new Date();
+		long milisec=date.getTime()-1;
+		Date delDate=new Date(milisec);
+		if(date.getMonth()==11){
+			delDate.setMonth(0);
+			delDate.setYear(delDate.getYear()+1);
+		}else{
+			delDate.setMonth(delDate.getMonth()+1);
+		}
+		flowerOrder.setMoment(new Date(milisec));
+		flowerOrder.setDeliveryDate(delDate);
+		flowerOrder.setStatus(Status.PENDING);
+		flowerOrderRepository.saveAndFlush(flowerOrder);
+	}
+	//Deleting (cancel)
+	public void delete(String ticker){
+		FlowerOrder flowerOrder=findOne(ticker);
+		Date date=new Date();
+		Date fOdate=flowerOrder.getDeliveryDate();
+		if(flowerOrder.getStatus()==Status.PENDING){
+			if(fOdate.after(date)){
+				if((date.getHours()+12)<fOdate.getHours()){
+					flowerOrder.setStatus(Status.CANCELLED);
+				}
+			}
+		}
+		if(flowerOrder.getStatus()!=Status.CANCELLED){
+			//TODO puede que pete la vista
+			Assert.isTrue(false, "Fallo en la fecha");
+		}
+		save(flowerOrder);
+	}
+	
+	//	Other business methods -------------------------------------
+
+
+//	public Flower reconstruct(FlowerForm FlowerForm) {
+//		Assert.isTrue(FlowerForm.getPassword().equals(FlowerForm.getConfirmPassword()));
+//		Assert.isTrue(FlowerForm.isAccepConditions());
+//		Flower result;
+//		result=create();
+//		UserAccount userAccount=result.getUserAccount();
+//		userAccount.setUsername(FlowerForm.getUserName());
+//		
+//		Md5PasswordEncoder encoder;		
+//		encoder= new Md5PasswordEncoder();
+//		String password=encoder.encodePassword(FlowerForm.getPassword(), null);
+//		userAccount.setPassword(password);
+//		
+//		result.setUserAccount(userAccount);
+//		
+//		result.setName(FlowerForm.getName());
+//		result.setSurname(FlowerForm.getSurname());
+//		result.setEmailAddress(FlowerForm.getEmailAddress());
+//		result.setContactPhone(FlowerForm.getContactPhone());
+//		result.setUrl(FlowerForm.getUrl());
+//		
+//		return result;
+//	}
+	
+}

@@ -1,0 +1,23 @@
+package converters;
+
+import javax.transaction.Transactional;
+
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
+
+import domain.ShippingCost;
+@Component
+@Transactional
+public class ShippingCostToStringConverter implements Converter<ShippingCost, String>{
+	@Override
+	public String convert(ShippingCost source) {
+		String result;
+
+		if (source == null)
+			result = null;
+		else
+			result = String.valueOf(source.getId());
+
+		return result;
+	}
+}

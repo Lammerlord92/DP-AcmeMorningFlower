@@ -1,0 +1,16 @@
+package repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+
+import domain.FlowerOrder;
+
+
+@Repository
+public interface FlowerOrderRepository extends JpaRepository<FlowerOrder,Integer>{
+	@Query("select fo from FlowerOrder fo where fo.ticker like ?1")
+	FlowerOrder findByTicker(String ticker);
+
+}

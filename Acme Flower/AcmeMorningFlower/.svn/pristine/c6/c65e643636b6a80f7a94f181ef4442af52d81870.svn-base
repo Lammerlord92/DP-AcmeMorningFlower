@@ -1,0 +1,24 @@
+package domain;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Access(AccessType.PROPERTY)
+public class ShippingCost extends DomainEntity{
+	private Money shippingCost;
+	
+	@Valid
+	@NotNull
+	public Money getShippingCost() {
+		return shippingCost;
+	}
+
+	public void setShippingCost(Money shippingCost) {
+		this.shippingCost = shippingCost;
+	}
+	
+}

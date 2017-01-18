@@ -1,0 +1,52 @@
+package domain;
+
+import java.util.Collection;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+@Entity
+@Access(AccessType.PROPERTY)
+public class Tag extends DomainEntity{
+	private Boolean cancelled;
+	
+
+	@NotNull
+	public Boolean getCancelled() {
+		return cancelled;
+	}
+	public void setCancelled(Boolean cancelled) {
+		this.cancelled = cancelled;
+	}
+	
+		
+	//Relationships -------------------------------------------
+	private Collection<Keyword> keywords;
+	private Collection<Flower> flowers;
+
+	@OneToMany(mappedBy="tag")
+	public Collection<Keyword> getKeywords() {
+		return keywords;
+	}
+	public void setKeyword(Collection<Keyword> keywords) {
+		this.keywords = keywords;
+	}
+	
+
+	@OneToMany(mappedBy="tag")
+	public Collection<Flower> getFlowers() {
+		return flowers;
+	}
+	public void setFlowers(Collection<Flower> flowers) {
+		this.flowers = flowers;
+	}
+	
+}

@@ -1,0 +1,95 @@
+package services;
+
+import java.util.Collection;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+
+import repositories.KeywordRepository;
+
+import security.Authority;
+import security.LoginService;
+import security.UserAccount;
+import domain.Keyword;
+
+@Transactional
+@Service
+public class KeywordService {
+
+	//	Managed repository -----------------------------------------	
+	@Autowired
+	private KeywordRepository keywordRepository;
+	//	Supporting services ----------------------------------------
+	@Autowired
+	private AdministratorService administratorService;
+	//	Constructor ------------------------------------------------
+	//	Simple CRUD methods ----------------------------------------
+	public Keyword create(){
+		administratorService.isAdmin();
+		Keyword result= new Keyword();
+		return result;
+		
+	}
+	
+//	public Collection<Administrator> findAll(){
+//		Collection<Administrator> result = administratorRepository.findAll();
+//		return result;
+//	}
+	
+//	public Administrator findOne(int administratorId){
+//		Administrator result = administratorRepository.findOne(administratorId);
+//		return result;
+//	}
+	
+	public void save(Keyword keyword){
+		administratorService.isAdmin();
+		keywordRepository.saveAndFlush(keyword);
+	}
+	
+	//	Other business methods -------------------------------------
+	public Collection<Keyword> findNotInTag(int tagId) {
+		administratorService.isAdmin();
+		Collection<Keyword> result = keywordRepository.findNotInTag(tagId);
+		return result;
+	}
+	
+
+//	public Administrator reconstruct(AdministratorForm administratorForm) {
+//		Assert.isTrue(administratorForm.getPassword().equals(administratorForm.getConfirmPassword()));
+//		Assert.isTrue(administratorForm.isAccepConditions());
+//		Administrator result;
+//		result=create();
+//		UserAccount userAccount=result.getUserAccount();
+//		userAccount.setUsername(administratorForm.getUserName());
+//		
+//		Md5PasswordEncoder encoder;		
+//		encoder= new Md5PasswordEncoder();
+//		String password=encoder.encodePassword(administratorForm.getPassword(), null);
+//		userAccount.setPassword(password);
+//		
+//		result.setUserAccount(userAccount);
+//		
+//		result.setName(administratorForm.getName());
+//		result.setSurname(administratorForm.getSurname());
+//		result.setEmailAddress(administratorForm.getEmailAddress());
+//		result.setContactPhone(administratorForm.getContactPhone());
+//		result.setUrl(administratorForm.getUrl());
+//		
+//		return result;
+//	}
+	
+	
+	public void isAdmin() {
+		UserAccount account=LoginService.getPrincipal();
+		Collection<Authority> authorities= account.getAuthorities();
+		Boolean res=false;
+		for(Authority a:authorities){
+			if(a.getAuthority().equals("ADMIN")) res=true;
+		}
+		Assert.isTrue(res);
+	}
+}

@@ -1,0 +1,114 @@
+package forms;
+
+import javax.persistence.Access;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.AccessType;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import domain.CreditCard;
+import domain.Customer;
+import domain.Money;
+@Embeddable
+@Access(AccessType.PROPERTY)
+public class FlowerOrderForm {
+	
+	private String ticker;
+	private String address;
+	private Money totalPrice;
+	private CreditCard creditCard;
+	private Customer sender;
+	private Customer recipient;
+	
+	@NotNull
+	@Valid
+	@AttributeOverrides({
+		@AttributeOverride (name="name",
+			column=@Column(name="senderName")),
+		@AttributeOverride(name="surname",
+			column=@Column(name="senderSurname")),
+			@AttributeOverride (name="birthdate",
+			column=@Column(name="senderBirthDate")),
+		@AttributeOverride(name="phoneNumber",
+			column=@Column(name="senderPhoneNumber")),
+			@AttributeOverride (name="emailAddress",
+			column=@Column(name="senderEmailAddress"))
+	})
+	public Customer getSender() {
+		return sender;
+	}
+	public void setSender(Customer sender) {
+		this.sender = sender;
+	}
+	@NotNull
+	@Valid
+	@AttributeOverrides({
+		@AttributeOverride (name="name",
+			column=@Column(name="recipientName")),
+		@AttributeOverride(name="surname",
+			column=@Column(name="recipientSurname")),
+			@AttributeOverride (name="birthdate",
+			column=@Column(name="recipientBirthDate")),
+		@AttributeOverride(name="phoneNumber",
+			column=@Column(name="recipientPhoneNumber")),
+			@AttributeOverride (name="emailAddress",
+			column=@Column(name="recipientEmailAddress"))
+	})
+	public Customer getRecipient() {
+		return recipient;
+	}
+	public void setRecipient(Customer recipient) {
+		this.recipient = recipient;
+	}	
+	@Column(unique=true)
+	@NotBlank
+	@Pattern(regexp="^\\d{8}-\\w+$")
+	public String getTicker() {
+		return ticker;
+	}
+	public void setTicker(String ticker) {
+		this.ticker = ticker;
+	}
+	
+	@NotBlank
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	@Valid
+	@NotNull
+	public Money getTotalPrice() {
+		return totalPrice;
+	}
+	public void setTotalPrice(Money totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+	@Valid
+	@NotNull
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
+	}
+
+	//Relationships -------------------------------------------
+
+	private int flower;
+
+	public int getFlower() {
+		return flower;
+	}
+	public void setFlower(int flower) {
+		this.flower = flower;
+	}
+}
